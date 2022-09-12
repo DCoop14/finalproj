@@ -3,6 +3,7 @@ from .forms import LogInForm, UserCreationForm
 
 # import login functionality
 from flask_login import login_user, logout_user, login_required, current_user 
+from werkzeug.security import check_password_hash
 
 
 # import models
@@ -25,7 +26,7 @@ def logMeIn():
             # ex 1 , user does not exist
             if user:
                 # compare passwords
-                if password == user.password:
+                if check_password_hash(user.password, password):
                     login_user(user)
                 else:
                     print('Incorrect password')

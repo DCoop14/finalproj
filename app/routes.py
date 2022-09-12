@@ -1,6 +1,7 @@
 from app import app
-from flask import render_template
-
+from flask import render_template, request
+from requests import request as fetch
+from . import models
 
 @app.route('/')
 def index():
@@ -10,4 +11,18 @@ def index():
 
 @app.route('/charities')
 def contact():
-    return render_template('charities.html')
+    res = fetch(method='GET', url='https://api.data.charitynavigator.org/v2/Organizations?app_id=ee6df4b0&app_key=97f2f6a8fb49596ad5fe1cbd69f23c0e')
+    charities = res.json()
+    return render_template('charities.html', charities=charities)
+
+@app.route('/charities/create', methods=['POST'])
+def contact_create(): 
+    print(request.form)
+    charity_id = request.form['charity_id']
+    user_id = request.form['user_id']
+    amount = request.form['amount']
+    contribution = models.Contribution(amount=amount, charity_id=charity_id, user_id=user_id)
+    contribution
+    charities = []
+    return render_template('charities.html', charities=charities)
+

@@ -5,9 +5,35 @@
   
   
   
+  Charities Page 
   
-  Charities Page   
+  {% for charity in charities %}
+  <div class="card" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">{{ charity.charityName }}</h5>
+      <!-- <h6 class="card-subtitle mb-2 text-muted">{{ charity.mission }}</h6> -->
 
+      <p class="card-text">
+        {{ charity.mailingAddress.city }}, {{ charity.mailingAddress.stateOrProvince }}
+      </p>
+      <a target="_blank" href="{{ charity.charityNavigatorURL }}" class="card-link">More Info</a>
+      {% if (charity.websiteURL) %}
+        <a target="_blank" href="{{ charity.websiteURL }}" class="card-link">Website URL</a>
+      {% endif %}
+      <form method="POST" action="http://127.0.0.1:5000/charities/create">
+        <label>Amount: $ <input name="amount" type="number" min="10" value="10"/></label>
+        <input name="charity_id" type="hidden" value="000000424"/>
+        <input name="user_id" type="hidden" value="12345"/>
+        <button>Donate</button>
+      </form>
+      
+    </div>
+  </div>
+
+
+
+  {% endfor %}
+  
 
 
 
