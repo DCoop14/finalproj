@@ -14,17 +14,19 @@
       <!-- <h6 class="card-subtitle mb-2 text-muted">{{ charity.mission }}</h6> -->
 
       <p class="card-text">
-        {{ charity.mailingAddress.city }}, {{ charity.mailingAddress.stateOrProvince }}
+        {{ charity.mailingAddress.city }}, {{ charity.mailingAddress.stateOrProvince }},
+        
       </p>
       <a target="_blank" href="{{ charity.charityNavigatorURL }}" class="card-link">More Info</a>
+      
       {% if (charity.websiteURL) %}
         <a target="_blank" href="{{ charity.websiteURL }}" class="card-link">Website URL</a>
       {% endif %}
       <form method="POST" action="http://127.0.0.1:5000/charities/create">
-        <label>Amount: $ <input name="amount" type="number" min="10" value="10"/></label>
-        <input name="charity_id" type="hidden" value="000000424"/>
-        <input name="user_id" type="hidden" value="12345"/>
-        <button>Donate</button>
+        <label>Amount: $ <input name="amount" type="number" min="10" value="0"/></label>
+        <input name="charity_id" type="hidden" value="{{ charity.ein }}"/>
+        <input name="user_id" type="hidden" value="{{ user }}"/>
+        <button type="submit" value="donate" name="contribute" class="btn btn-success">Donate</button>
       </form>
       
     </div>

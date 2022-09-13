@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <a href="/charities">Go to Charities Page</a>
+  <a href="/charities"></a>
 
     Home Page
     Welcome to CareNow
@@ -10,16 +10,20 @@
     
 
     {% for x in names %}
-        {% if x ['name']== 'Charles' %}
-        <div class="card" style="width: 20rem;">
-          <img src="{{ x['img'] }}" class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">{{ x['name'] }}</h5>
-            <p class="card-text">Contribution: {{ x.contribution }}</p>
+       <div class="container"> 
+          <div class="row mb-5">
+            <div class="column m-5">
+                <div class="card" style="width: 50rem;">
+                  <img src="{{ x['img'] }}" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title"></h5>
+                    <p class="card-text"></p>
+                  </div>
+                </div>
+              </div>
           </div>
-        </div>
+      </div>
       
-        {% endif %}
 
 
     {% endfor %}

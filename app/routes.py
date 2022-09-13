@@ -1,11 +1,12 @@
 from app import app
 from flask import render_template, request
 from requests import request as fetch
-from . import models
+from app.models import Contribution, db
+from flask_login import current_user
 
 @app.route('/')
 def index():
-    user = [{'name': 'CareNow','img': 'https://data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMMAAADDCAMAAAAIoVWYAAAArlBMVEX////+/v4AU5riGyMAUpqqxt16pcpCgLT1s7b1t7qwyt/mPUPteX3sa3DlNDv4z9Hzpajym580dq787e7B1eY8e7HpVFoGV5z74eLo7/bvhIiFrM73xcf75eb99vfjKTHL3OqZutbxlJjiISnqXGL09/rtcnfufYEYY6Pj7PSOs9Ika6gPXaDrZGm50ONtnMXnSE9Ui7v51dbX5O/nQ0lNh7jymJzkLjZxn8foT1Xk6GNAAAAOiklEQVR4nO1aiXbiOgyVaEvp3iFMSymktJTuy9B2tv//sWcnlizH2QADwzvodALXSRzJkq4veQ8AjQGC+uOvCVAQGCQnk6sqAdCUiBAGQAmA/4NRGtB+WzdbX8+tyYykB6SvHsheWw2WZegc0x5G4Q1a4PRPGViQk3JJJUD5Z6iFfedU0RnOTDmwPBUKYCn4H5jtjJwPd4w6qBbAsKDMVr2EG8sYel884LJsJViAdwW8ZGkJiVJIN4GVJyyHBP+WAbRPDQJAAPQBNRBTGQMbEKtB02tVQAxBEMALYzWfBbzOWRoAOQZl4zlAOAHBAWaBR2DVjBaADcNaqKZbnuVwzmqWLqhNpflWp1c3mm8dzFbVqmhlblv1Eq7Eanb1AkGxU3UyUv+JoUPYaL410Xw2Cq/jC0agAoAcDgWgCMyg+VZiZUITPCvsm2l6cEHAb4702/obxYSFiy/OMPFUgeBWUQuGOtPvDJiXLOCwnTXIBbbxICAA/uKC8Eu2AhOLuK69seolXImtml7LnNpovo3m22g+38t/lGCn03xBbLmEtdzlXIhxKA45EcMwywhyy1WDWULN14+zA8mtCB4g6kSWfGjplI9MW8AhlgBiRHIgDJBUmQVrb7aqanHrv2irXsKV2D+p+RZiSw6Be9wgREkDArgKpRRIQRAGWEekpAMmVCRlx06QF+Yo1AsJ1HKQS81zASgBdk8g9y2wCs5TclUg+xECQBHYaL7yJlsaWO5yLsQ2mq8IgOG+jearbbaqcihpPbpl1Uu4Ettovo3mIzrNgI3mKwTZj43mw43mWwfbaL4iAIb7NpqvttmqyqGk2brl45uyeKZbZ7JFLMvplrJoETMHshKe2/+u7cKPYY0033VDmx/DOmm+TAxrqflMDJjG4FHzXGBZms/Jw31P2a+103zDS23jNA+JHcw+WZlbS9B8IgbbcU77BQbBVsraIvJQZuE0X/cb2d0RWY8msav2T2u+Fq/+MVbrt7Caz7IpSLd9XqoAMgaxbWAQ4NR8FggoGC3qdgeRO1RpbgyP+8Yu5DVKjxj7LKeaqQBkDU96Z78TV37/7fWn4K3+mbbjtJZgp2Hsp8sjNNysP/G0Ft0cbEk7+BVPN8FhNobGpTy9sBhMOlRuTpMMXJ3d9W5uDm+vksLYS89R6wimygMmBrQxnHdoen2VjcHSCvVuGaB+pQ8HmCj0RdGZcmB0148NlcX9u5Ea6ZtrqPep13IBx7CduKqPDxe0UGkM2yIGe6YcINE8HSQgilKgq2v5aEBEltw/uNva2uMg7fIUAr+WGo1d2nK8PFgyrADWddoEBLCNPlAhjFpe//eP+w6VVbDEoeElGUPj0l7FMeB0VqqX6Gv8QzXCSc7d0WCaZ52q3fkeMzGcv7EGFTHkq9MCUBYKN3bPVn4AM/2wvb2dtsQjjdt+AKp6vmde0FXd26vYDZzdpBSg0w9JS5j6dbjV1rqQXuic8b2WzyKQtofq3YOY7iuOpeaKUE+nedi2+wGmWRD7w3j/vf1yfv7wvdmp3lBLNV+k0nA6n+aTADCTh0bjzc+Dumz89GAvae+raf7sGrvm3WGY4E8gDn2iSzqO5lNiZxRVaD6MoyjOnIlapycpiKNEYdEZL4aXx+SM4FZln233oskY9+n7Mz95kuA/1MrjB3GF4FZVSreSDXyC+Oj9UPv26O9NpL/3PvDk9rbb1/t6TwVwmmzqV7fEzX4Mje9jj5eGD9mL2o/IYe0YHx7P00UYG1eu6YJrl5e+trZuygqx+8oS6upGS9QW7KnqS9RIH/pWZP3tyn7Qi8X+/cFMLX2+eIE22mNOxHfjXNPgJ9MGFOTD2O2VkfaqsI2gr509uOv1XvWX11MTw++rVhT1saUVydfR0Zk++fvDjeHNrvW+G8M4U0ipTWwihslMSeloJnhOY+qYs9tPjpsY6eUkVWKdp2btKye/kvMY3ajvByYGRQPqghM18trVF8Y6MQexvo1j+OR1bbx8OlrjMi8EFTTfMEkc4NJp7CdlM5FpEJpvoPz5EN6jyIHyW1X9bUzKLsnJVgtVDMeKjTFWdXhPmu/jKt1mrOYb4rvZ1hrb7bHY49LWTMBL+7nB4LtJxHbj/EI/sc1ntO5S3WHY+TKj+XQMJ8ZJR/MlPaM00I/YKjudlTQPR3pIFdZfkmGg32lcRbKWhrJm3kUe+IqXHfWci+a5nzktDN9Eij7RdsfLRUbzxUktFegSvXd8yBM9ysONHvmrlK29Jb7S5wQvDRWD2t7l4SZSTZx/pjNzzTyJrkX8KWJ4F8TatB4ZZ9WTT7HA1NLeOgPRlYlBO6taaST/e8nt1tZhJgZR0hxNE58dZ5Qfu2ZgYveIa/wUIai1B5pKbTdZzad+/dzn8xLAkcdZR6aWtEbsq+I5FPaldxqh+YY64RMDkrpO+wFfDBjSrNfpme122gMatPHd3LNtU6TnabzLjk1NlcdXkVxRorwL1AyJfTN56IN8Mcn2Q2q+oX7Ohd0laPXHlJJHUnZEmm0ATsSOuco0yzNdc/5oPBKary+IKav5DlSxAJ/TRnvcifr+S+XhwLVXEJovXebOuRSAnAcNPmlu47jKg0qEuewlvefFlND283aakgk5LjQfKsq/E70sNd9BUvBS2Z1yDKhjeC3TfJ2U57KbQRMoNdcknYlxlH+2I1J7x0wirQC0mg9VeYw+8jWf6pWuJR595tDUko7hNKkdQRAZzdcxZ3ZdJ5q8Vz2bG5lxkl+u7h4+hCcHTyyHiN/TsUrEVyw8tR89j7OOKQb1Xfd0zn/HdWLQ9ujqu6Ylq/fkSWMm0U/9WCcRbRWho62G0klb+bojXnPbWp05c07sbYl+iEfub1j8NQAQe1wnU+6cB+vV953P4TUXSzvtcJkIVW5cadp+FtBPsnO9+m/1sBV9pe9nyLS4sDHAqxv7nha2eTFozSFjcLwStu+F/KKVkVbgpF864FmaDv0bYuuHVE36T4nugaKh313gyrvb4hjQUNoemq5O3vDcOz3NMsTRqUpGjD3C1TYhpWOv/pN01ITxLkk3R/OlbXevX/MddoXm+9Av+gao9rRjklOxCmHEPa1vfdUvdcyUA5Wj40hqvg7RP2sOfs83fLFLSx/PFyYGk4iEfZOhIcfwBk/N5iVmNJ+hlVYiSf/e9AdxHHf3el/Jb54IYqWJtu76qnWj0wP9K0jWEkZqaNTrqgkGv/RPvROnH96AlgvBao70PV/H+xH0/MgryInYNctMzNbGztPkfect5z2ftsHhKLPnju71y8s4+Rk3Ok5eKR+ftAQv6bt+JMNfx0nIfZeX3uT8th5SlTTMlNNP+V8rqCN2DAe9MX4a7k4unoiVMjEof26+RAB/v0VmvEXDo8MIMzFg3Luis0eDDLe+SRq0LWDe842bIhXP1+xWYmkiHti3tkkDDps7l08dn1ttL3dbvaPbs9u7mz3n/xs5ubl7Peq19Fjc7cbpgSxq3etbTgd0dYfenwwdYdaxb14Mb1xc/3xQ+uH8ebIvfx/re97oSjPBToI1b+38+XPtvz6rY9O857OeVAMcP16MsfoeMzv6AMU/M1AcHdYDizJBRTmaL+3wXM3HYJr3fMBvGMIBR+blaD7rAha955seQDAAknuyQEDwji6YzWDxYBlVvHJbkyhNOriJzChwszIgZVcFQN4VBFC/0ocDTBRyvRmgONrep14rAUAyz7L2fECsjPFdAKIo6woRWYYVaFYRZDHgkHkZ5gTWddoEBCjgnEIyqEkZwa3suYt7ch49zw6wBMBirKYmCQtqOYZ1gW0K8Zy5gZkdfYDinxkoji7gisxigoocwCoHQJRYegA+Im8WCNUAkPkQwgHiUPAAszuRGbkgmmtGAMEAONyYAQKCd3TBbFaTjOcBy6jilduaRIlCJ1iXSaKgAKZ3sQqAvCsIoH6lDweYKOR6M0BxtL1PvVYCDHGYaQMAsTKklSwgirKuEJFlWIFmFUEWAw6Zl2FOYF2nTUCAAs4pJIOalBHcyp67uCfn0fPsAEsALMZqapKwoJZjWBfYphDPmRuY2dEHKP6ZgeLoAq7ILCaoyAGscgBEiaUH4CPyZoFQDQCZDyEcIA4FDzC7E5mRC6K5ZgQQDIDDjRkgIHhHF8xmNcl4HrCMKl65rUmUKHSCdZkkCgpgeherAMi7ggDqV/pwgIlCrjcDFEfb+9RrJcAQh5k2ABArQ1rJAqIo6woRWYYVaFYRZDHgkHkZ5gTWddoEBCjgnEIyqEkZwa3suYt7ch49zw6wBMBirKYmCQtqOYZ1gW0K8Zy5gZkdfYDinxkoji7gisxigoocwCoHQJRYegA+Im8WCNUAkPkQwgHiUPAAszuRGbkgmmtGAMEAONyYAQKCd3TBbFaTjOcBy6jiJdny23Mmy3BPnqu2WxggSiDJrAxIHRMEmLp3XJEeg0PpfCNHycD0PvVaCTAPMNMGAGJlSCtZQBRlXSEiy7ACzSqCLAYcMi/DnMC6TpuAAJDt8hJeSgO0f8UgPP9ACYCNLdlq8FLRoD2Z1/k5ILgJkkEEDyB48RU7UbyPLKUqi2Mw3QHgtq/hJUtb6R5g+KIUADIfQjhAHAoeYHYnMiMXBC/NCCAYAElUWQB2yBKppNws0U1Lj8VcHQx4+8MaWl7XBGq+RQEsAnQtKSnWVigBwSog+AKCAFP3jivSY7ByCMSNHD8D0/vUayXAPMBMGwCIlUFz2gKiKOsKEVmGFWhWEWQx4JB5GeYE1nXaBATwerqYBkyA9q8YTEdddQCUANjYko07xQPZq0qmyOv8HBDcBMkgggcQvPiKnajJ4Yuy4hhMdwC47Wt4ydJWugcYvigFgMyHEA4Qh4IHmN2JzMgFwUszAggGQBJVFoAdskQqKTdLdNPSYzFXBwPe/rCGltc1gZpvUQCLAF1LSoq1FUpAsAoIvoAgwNS944r0GKwcAnEjx8/A9D71WgkwDzDTBgBiZdCctuA/Mde88yhd2G8AAAAASUVORK5CYII=',}]
+    user = [{'name': 'CareNow','img': 'https://images.app.goo.gl/EZVQRxbs5iJPvz968'}]
 
     return render_template('index.html', names=user)
 
@@ -15,14 +16,33 @@ def contact():
     charities = res.json()
     return render_template('charities.html', charities=charities)
 
-@app.route('/charities/create', methods=['POST'])
-def contact_create(): 
-    print(request.form)
-    charity_id = request.form['charity_id']
-    user_id = request.form['user_id']
-    amount = request.form['amount']
-    contribution = models.Contribution(amount=amount, charity_id=charity_id, user_id=user_id)
-    contribution
-    charities = []
-    return render_template('charities.html', charities=charities)
 
+@app.route('/charities/create', methods=['GET','POST'])
+def contact_create(): 
+    res = fetch(method='GET', url='https://api.data.charitynavigator.org/v2/Organizations?app_id=ee6df4b0&app_key=97f2f6a8fb49596ad5fe1cbd69f23c0e')
+    charities = res.json()
+    print(charities)
+    user = current_user.id 
+    if request.method =='POST':
+        if request.form.get('contribute') == 'donate':
+            amount = request.form.get('amount')
+            charity_id = request.form.get('charity_id')
+            print(amount, charity_id)
+            c = Contribution(amount, charity_id, user)
+            db.session.add(c)
+            db.session.commit()
+            return render_template('charities.html', user=user, charities=charities)
+
+
+
+
+    # print(request.form)
+    # charity_id = request.form['charity_id']
+    # user_id = request.form['user_id']
+    # amount = request.form['amount']
+    # contribution = models.Contribution(amount=amount, charity_id=charity_id, user_id=user_id)
+    # contribution
+    return render_template('charities.html', user=user, charities=charities)
+
+    
+    
