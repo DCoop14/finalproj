@@ -3,7 +3,7 @@ from .forms import LogInForm, UserCreationForm
 
 # import login functionality
 from flask_login import login_user, logout_user, login_required, current_user 
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 # import models
@@ -51,7 +51,7 @@ def signMeUp():
         if form.validate():
             username = form.username.data
             email = form.email.data
-            password = form.password.data
+            password = generate_password_hash(form.password.data)
             
     
             print(username, email, password)

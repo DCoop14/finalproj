@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 3dac20987e76
+Revision ID: 53748fc24fa3
 Revises: 
-Create Date: 2022-09-07 23:41:47.573588
+Create Date: 2022-09-13 16:08:07.562742
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3dac20987e76'
+revision = '53748fc24fa3'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -35,15 +35,20 @@ def upgrade():
     sa.UniqueConstraint('username')
     )
     op.create_table('contribution',
-    sa.Column('amount', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('amount', sa.Integer(), nullable=True),
+    sa.Column('charity_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['charity_id'], ['charity.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('amount')
+    sa.PrimaryKeyConstraint('id', 'charity_id', 'user_id')
     )
     op.create_table('volunteer',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('charity_id', sa.Integer(), nullable=False),
     sa.Column('hours', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['charity_id'], ['charity.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

@@ -1,12 +1,12 @@
 from app import app
 from flask import render_template, request
 from requests import request as fetch
-from app.models import Contribution, db
+from app.models import db, Contribution
 from flask_login import current_user
 
 @app.route('/')
 def index():
-    user = [{'name': 'CareNow','img': 'https://images.app.goo.gl/EZVQRxbs5iJPvz968'}]
+    user = [{'name': 'CareNow','img': 'https://i0.wp.com/loudounnow.com/wp-content/uploads/2017/07/Unknown.png?fit=225%2C225&ssl=1'}]
 
     return render_template('index.html', names=user)
 
