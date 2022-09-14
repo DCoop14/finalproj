@@ -1,0 +1,40 @@
+
+  {% extends 'base.html' %}
+  
+  {% block content %}
+  
+  
+  
+  
+  
+
+
+  <div class="container">
+    <img src="" alt="">
+
+
+  </div>
+
+
+  <div class="card" style="width: 20rem;">
+    <div class="card-body">
+      <h5 class="card-title">Your Goal</h5>
+      
+      <form method="POST" action="http://127.0.0.1:5000/goals">
+        <label>Amount: $ <input name="amount" type="number" min="10" value="{{ amount }}"/></label>
+        
+        <input name="user_id" type="hidden" value="{{ user }}"/>
+        <button type="submit" value="goal" name="submit" class="btn btn-success">Set Goal</button>
+      </form>
+      
+    </div>
+  </div>
+
+
+
+  
+  
+
+
+
+  {% endblock %}

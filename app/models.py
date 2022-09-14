@@ -87,6 +87,27 @@ class Contribution(db.Model):
         self.amount = amount
         self.charity_id2 = charity_id
         self.user_id = user_id
+
+
+class Goal(db.Model):
+    id = db.Column(db.String, primary_key=True)
+    amount = db.Column(db.Integer)
+    # charity_id = db.Column(db.String)
+    # charity_id = db.Column(db.Integer, db.ForeignKey('charity.id'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    # user_rel = db.relationship("User")
+
+
+    def __init__(self, amount, user_id):
+        self.id = token_hex(16)
+        self.amount = amount
+        # self.charity_id2 = charity_id
+        self.user_id = user_id
+
+
+
+
+
 class Volunteer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
