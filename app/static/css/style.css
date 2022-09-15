@@ -1,3 +1,21 @@
 body {
     background-color: darkblue;
   }
+
+
+
+.fade-out {
+    animation: fadeOut 15s;
+  }
+
+
+
+@keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+
+  to {
+    opacity: 0
+  }
+}

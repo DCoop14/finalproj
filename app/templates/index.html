@@ -5,28 +5,57 @@
   <a href="/charities"></a>
 
     
-
-    
-
-    {% for x in names %}
-       <div class="container"> 
+        <div class="container justify-content-center"> 
           <div class="row mb-5">
             <div class="column m-5">
-                <div class="card" style="width: 20rem;">
-                  <img src="{{ x['img'] }}" class="card-img-top" alt="...">
-                  <div class="card-body">
-                    <h5 class="card-title"></h5>
-                    <p class="card-text"></p>
-                  </div>
+
+              
+                <h1 class="fade-out">
+                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR03n1ouocvzLHEk4Tqrde7F5Vt8Z24y_-mmQ&usqp=CAU" alt=""> 
+                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ67ARShsfVHrJaHbGFkYi2rSp33ru31Sj8ig&usqp=CAU" alt="">
+                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnSyspC4w0KgDYAqIFZm9jdlhPN1rc3n4a6A&usqp=CAU" alt="">
+                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMOoVUaC5Cjs85dgl6kXjF2EAyX8kop1IrLA&usqp=CAU" alt="">
+                </h1>
+             
+              
+            
+
+              {% for x in names %}
+              <div class="d-flex justify-content-center">
+                  <div class="card" style="width: 20rem;">
+                    <img src="{{ x['img'] }}" class="card-img-top" alt="...">
+                    
+                    <div class="card-body">
+                      <h5 class="card-title"></h5>
+                      <p class="card-text"></p>
+                    </div>
                 </div>
               </div>
+              {% endfor %}
+             </div>
           </div>
       </div>
-      
 
-
-    {% endfor %}
+      <div class="container"> 
+        <div class="row mt-3">
+          <div class="column m-3">
+            
+              <h1 class="fade-out">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTT-vse0EUaF_8vCE2kj6L1pZfonczMxsHJog&usqp=CAU" alt="">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI0si4eB4SCwnGm664bAPGFKdY8fqEuCGf_Q&usqp=CAU" alt="">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2YNQLzHMkWdlB1OO-NeTF-IucDyTfYrmstw&usqp=CAU" alt="">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsCuJXEjXdCbiTCVnbVRz1HarWWGv6RHpWzA&usqp=CAU" alt="">
+              </h1>
+            
+          </div>
+        </div>
+      </div>
 
 {% endblock %}
+
+<div class="p-3 mb-2 bg-info text-dark">
+  <a href="/">Back to Home Page</a>
+    <div class="container">
+      <div class="row">
 
 
