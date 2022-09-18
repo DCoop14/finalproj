@@ -2,24 +2,20 @@
 
 {% block content %}
 
-<div class="column">
-  <div class="row ">
-    <div class="col-sm-6">
-
-      <div class="card" style="width: 18rem;">
-        <img src="https://img.uline.com/is/image/uline/S-18692?$Mobile_Zoom$"
-          class="card-img-top" alt="...">
+<div class="row">
+  {% for i in item %}
+    <div class="card text-decoration-none text-dark" style="width: 18rem;">
+        <img src="{{ i['img_url'] }}" class="card-img-top" alt="...">
         <div class="card-body">
-          <h5 class="card-title">Care Cart</h5>
-          <p class="card-text">
-            content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
-        </div>
-      </div>
+          <p class="card-text">Name: {{ i[name] }}</p>
+          <p class="card-text">Price: ${{ i[price] }}</p>
+          <p class="card-text">Description: {{ i[description] }}</p>
+          <a href="{{ url_for('shop.addToCart', name=i.name) }}" class="btn btn-success">Add to Cart</a>
     </div>
+  {% endfor %}
   </div>
-</div>
-
-
+  Items in Cart = {{ total }}
+  <a href="{{ url_for('shop.clearall') }}" class="btn btn-danger">Remove ALL Items</a>
+<br>
 
 {% endblock %}
