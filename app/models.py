@@ -6,6 +6,11 @@ from werkzeug.security import generate_password_hash
 
 db = SQLAlchemy()
 
+cart = db.Table('cart',
+    db.Column('cart_id', db.Integer, primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('item_id', db.Integer, db.ForeignKey('item.id'))
+)
 
 class User(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -14,11 +19,34 @@ class User(db.Model,UserMixin):
     password = db.Column(db.String(200), nullable=False)
     contribution_id = db.relationship("Contribution")
 
+    cart = db.relationship("Item",
+        secondary = cart,
+        backref = 'shoppers',
+        lazy = 'dynamic'
+    )
 
     def __init__(self, username, email, password):
         self.username = username
         self.email = email
         self.password = password
+
+    
+class Item(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    price = db.Column(db.Integer)
+    description = db.Column(db.String)
+    img_url = db.Column(db.String) 
+
+    def __init__(self, name, price, description, img_url):
+        self.name = name
+        self.price = price
+        self.description = description
+        self.img_url = img_url
+
+    def saveItem(self):
+        db.session.add(self)
+        db.session.commit()  
 
 class Charity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -75,3 +103,4 @@ class Volunteer(db.Model):
         self.user_id = user_id
         self.charity_id = charity_id
         self.hours = hours
+

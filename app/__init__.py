@@ -6,6 +6,7 @@ from flask_login import LoginManager
 
 from .auth.routes import auth
 from .models import User
+from .shop.routes import shop
 
 app = Flask(__name__)
 login = LoginManager()
@@ -16,6 +17,8 @@ def load_user(user_id):
 
 
 app.register_blueprint(auth)
+app.register_blueprint(shop)
+
 
 
 app.config.from_object(Config)
