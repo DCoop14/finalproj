@@ -16,6 +16,15 @@
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Dropdown
             </a>
+            {% if current_user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="/posts/create">Create Post</a></li>
+          {% else %}
+
+          {% endif %}
+           
+          <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="{{ url_for('shop.getCart') }}">Feed</a>
+            </li>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               {% if current_user.is_authenticated %}
                 <li><a class="dropdown-item" href="/logout">Log Out</a></li>

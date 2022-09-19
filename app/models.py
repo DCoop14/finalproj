@@ -12,6 +12,12 @@ cart = db.Table('cart',
     db.Column('item_id', db.Integer, db.ForeignKey('item.id'))
 )
 
+followers = db.Table('followers',
+    db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('followed_id', db.Integer, db.ForeignKey('user.id')),
+)
+
+
 class User(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
@@ -32,12 +38,12 @@ class User(db.Model,UserMixin):
         self.password = generate_password_hash(password)
         self.apitoken = token_hex(16)
 
-    # def to_dict(self):
-    #     return{
-    #         'id' : self.id,
-    #         'username' : self.username,
-    #         'email' : self.email
-    #     }
+    def to_dict(self):
+        return{
+            'id' : self.id,
+            'username' : self.username,
+            'email' : self.email
+        }
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
