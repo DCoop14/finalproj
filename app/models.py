@@ -18,6 +18,7 @@ class User(db.Model,UserMixin):
     email = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(200), nullable=False)
     contribution_id = db.relationship("Contribution")
+    apitoken = db.Column(db.String, default = None, nullable=True)
 
     cart = db.relationship("Item",
         secondary = cart,
@@ -28,7 +29,44 @@ class User(db.Model,UserMixin):
     def __init__(self, username, email, password):
         self.username = username
         self.email = email
-        self.password = password
+        self.password = generate_password_hash(password)
+        self.apitoken = token_hex(16)
+
+    # def to_dict(self):
+    #     return{
+    #         'id' : self.id,
+    #         'username' : self.username,
+    #         'email' : self.email
+    #     }
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    img_url = db.Column(db.String(300))
+    caption = db.Column(db.String(300))
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __init__(self, title, img_url, caption, user_id):
+        self.title = title
+        self.img_url = img_url
+        self.caption = caption
+        self.user_id = user_id
+
+    def updatePostInfo(self, title, img_url, caption):
+        self.title = title
+        self.img_url = img_url
+        self.caption = caption
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def saveUpdates(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
     
 class Item(db.Model):
@@ -104,3 +142,5 @@ class Volunteer(db.Model):
         self.charity_id = charity_id
         self.hours = hours
 
+
+   

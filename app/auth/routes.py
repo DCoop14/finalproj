@@ -70,3 +70,92 @@ def signMeUp():
 
 
     return render_template('signup.html', form = form)
+
+# @ig.route('api/posts/create', methods=["POST"])
+# 
+# def createPostAPI():
+#     data = request.json #this is coming from POST request Body
+
+#     title = data['title']
+#     caption = data['caption']
+#     user_id = data['user_id']
+#     img_url = data['img_url']
+
+#     post = Post(title, img_url, caption, user_id)
+#     post.save()
+
+#     return {
+#         'status' : 'ok',
+#         'message' : "Post was successfully created."
+#     }
+
+
+
+
+#######  API ROUTES  #############
+@auth.route('/api/signup', methods=["POST"])
+def apiSignMeUp():
+    data = request.json
+   
+
+    username = data['username']
+    email = data['email']
+    password = data['password']
+
+    print(username, email, password)
+
+    # add user to database
+    user = User(username, email, password)
+
+    # add instance to our db
+    db.session.add(user)
+    db.session.commit()
+   
+    return {
+        'status' : 'ok"',
+        'message' : f"Successfully created user {username}"
+       
+    }
+
+@auth.route('/api/login', methods=["POST"])
+def apiLogMeIn():
+    data = request.json
+
+    username = data['username']
+    password = data['password']
+
+    user = User.query.filter_by(username=username).first()
+
+    if user:
+        # checkpassword
+        if check_password_hash(user.password, password):
+            return {
+                'status': 'ok',
+                'message' : "You have successfully logged in",
+                'data' : {
+                    'user' : user(),
+                    
+                 } 
+            }
+        return {
+            'status' : 'not ok',
+            'message' : "Incorrect password."
+        }  
+    return {
+        'status' : 'not ok',
+        'message' : 'Invalid username.'
+    }  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
